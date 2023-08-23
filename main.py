@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import simpledialog
 import os
+from tkinter import messagebox
 # Create a Tkinter window
 window = tk.Tk()
 
@@ -40,5 +41,9 @@ with open(file_path, 'w') as f:
     f.write('env/')
 print("Created .gitignore and added env/ to it:", file_path)
 
+# Open in vs code
+response = messagebox.askyesno("Confirmation", "Open in vs code?")
+if response:
+    subprocess.run(['code', new_directory], shell=True)
 # Close the window
 window.destroy()
