@@ -28,7 +28,7 @@ print("Created main.py:", file_path)
 
 # Create Python virtual environment
 venv_path = os.path.join(new_directory, 'env')
-subprocess.run(['python', '-m', 'venv', venv_path])
+subprocess.run([r"C:\Users\INDIA\AppData\Local\Programs\Python\Python311\python.exe", '-m', 'venv', venv_path])
 print("Created Python Virtual Environment")
 
 # Initialize Git repository
@@ -36,14 +36,17 @@ subprocess.run(['git', 'init', new_directory])
 print("Initialized git")
 
 # Create a .gitignore file
-file_path = os.path.join(new_directory, ".gitignore")
-with open(file_path, 'w') as f:
+gitignore_path = os.path.join(new_directory, ".gitignore")
+with open(gitignore_path, 'w') as f:
     f.write('env/')
-print("Created .gitignore and added env/ to it:", file_path)
+print("Created .gitignore and added env/ to it:", gitignore_path)
 
 # Open in vs code
 response = messagebox.askyesno("Confirmation", "Open in vs code?")
 if response:
-    subprocess.run(['code', new_directory])
-# Close the window
+    # st = 'code '+ new_directory + '\main.py'
+    # print(st)
+    os.system(rf'code "{new_directory}"')
+    os.system(rf'code "{file_path}"')
+# Close the window"D:\python programs\aaaaa\main.py"
 window.destroy()
