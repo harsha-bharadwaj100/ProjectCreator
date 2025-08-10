@@ -39,8 +39,8 @@ print("Initialized git repository")
 
 # uv init already creates a .gitignore, but let's ensure it has the right content
 gitignore_path = os.path.join(new_directory, ".gitignore")
-gitignore_content = """.venv/
-.venv\n.env\n__pycache__/\n*.pyc\n
+gitignore_content = """
+build/\ndist/\nwheels/\n.venv\n.env\n__pycache__/\n*.py[oc]\n*.egg-info\n
 """
 
 with open(gitignore_path, "w") as f:
