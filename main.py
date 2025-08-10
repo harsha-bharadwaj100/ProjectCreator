@@ -14,52 +14,57 @@ window.withdraw()
 # Open a file dialog to select the directory
 directory = filedialog.askdirectory(title="Select Directory")
 
-# Create a new directory
-res = simpledialog.askstring("Project Directory", "Enter: ")
+# Get project name
+res = simpledialog.askstring("Project Directory", "Enter project name: ")
 if res == None or res == "":
     exit()
+
 new_directory = os.path.join(directory, res)
-os.mkdir(new_directory)
-print("Created Project Directory:", new_directory)
 
-# Create a file inside the new directory
-file_path = os.path.join(new_directory, "main.py")
-with open(file_path, "w") as f:
-    f.write('print("Hello, world!")')
-print("Created main.py:", file_path)
-
-# Create Pipenv virtual environment in the project folder
+# Initialize uv project (this creates the directory and basic structure)
 try:
-    # Change to the new directory
-    os.chdir(new_directory)
-
-    # create .venv directory
-    os.mkdir(".venv")
-
-    # Initialize Pipenv environment
-    subprocess.run(["pipenv", "install"], check=True)
-    print("Created Pipenv Virtual Environment")
+    subprocess.run(["uv", "init", new_directory], check=True)
+    print("Created uv project:", new_directory)
 except subprocess.CalledProcessError:
-    print("Error: Ensure pipenv is installed (pip install pipenv)")
-    messagebox.showerror("Error", "Pipenv installation failed. Is pipenv installed?")
+    print("Error: Ensure uv is installed")
+    messagebox.showerror("Error", "uv initialization failed. Is uv installed?")
     exit()
 
+# Change to the new directory for subsequent operations
+os.chdir(new_directory)
+
 # Initialize Git repository
-subprocess.run(["git", "init", new_directory])
-print("Initialized git")
+subprocess.run(["git", "init"], check=True)
+print("Initialized git repository")
 
-# Create a .gitignore file
+# uv init already creates a .gitignore, but let's ensure it has the right content
 gitignore_path = os.path.join(new_directory, ".gitignore")
-with open(gitignore_path, "w") as f:
-    f.write(".venv\n.env\n__pycache__/\n*.pyc\n")
-print("Created .gitignore and added .venv/ to it:", gitignore_path)
+gitignore_content = """.venv/
+.venv\n.env\n__pycache__/\n*.pyc\n
+"""
 
-# Open in vs code
-response = messagebox.askyesno("Confirmation", "Open in vs code?")
+with open(gitignore_path, "w") as f:
+    f.write(gitignore_content)
+print("Updated .gitignore with comprehensive Python exclusions")
+
+# Create initial virtual environment and sync dependencies
+try:
+    subprocess.run(["uv", "sync"], check=True)
+    print("Created virtual environment and synced dependencies")
+except subprocess.CalledProcessError:
+    print("Warning: Could not sync dependencies, but project created successfully")
+
+# Get the path to the main.py file (created by uv init)
+file_path = os.path.join(
+    new_directory, "hello.py" if "hello" in res.lower() else "main.py"
+)
+
+# Open in VS Code
+response = messagebox.askyesno("Confirmation", "Open in VS Code?")
 if response:
-    # st = 'code '+ new_directory + '\main.py'
-    # print(st)
     os.system(rf'code "{new_directory}"')
-    os.system(rf'code "{file_path}"')
-# Close the window"D:\python programs\aaaaa\main.py"
+    if os.path.exists(file_path):
+        os.system(rf'code "{file_path}"')
+
+# Close the window
 window.destroy()
